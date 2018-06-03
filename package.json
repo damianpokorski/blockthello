@@ -1,0 +1,11 @@
+{
+  "name": "blockthello",
+  "version": "1.0.0",
+  "description": "Simple Othello clone",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Damian Pokorski <damianpokorski@hotmail.com> (http://damianpokorski.com)",
+  "license": "ISC"
+}

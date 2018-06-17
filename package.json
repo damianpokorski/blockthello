@@ -1,11 +1,16 @@
 {
-  "name": "blockthello",
-  "version": "1.0.0",
-  "description": "Simple Othello clone",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "author": "Damian Pokorski <damianpokorski@hotmail.com> (http://damianpokorski.com)",
-  "license": "ISC"
+    "name": "blockthello",
+    "version": "1.0.0",
+    "description": "Simple Othello clone",
+    "main": "index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "serve": "node index.js"
+    },
+    "author": "Damian Pokorski <damianpokorski@hotmail.com> (http://damianpokorski.com)",
+    "license": "ISC",
+    "dependencies": {
+        "express": "^4.16.3",
+        "serve-handler": "^2.4.0"
+    }
 }

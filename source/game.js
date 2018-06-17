@@ -39,7 +39,6 @@ class Game {
 
     // P5 setup
     setup() {
-        console.log("SETTING UP");
         this.style = {
             bg: [color('#574AE2'), color('#222A68')],
             fg: color('#654597'),
@@ -55,7 +54,6 @@ class Game {
         };
         noStroke();
         createCanvas(window.innerWidth, window.innerHeight);
-        console.log([window.innerWidth, innerHeight]);
         this.drawGrid();
     };
 
@@ -147,12 +145,10 @@ class Game {
         var blacks = 0;
         this.game.grid.forEach((row, y) => row.forEach((value, x) => {
             if (value == 1) {
-                console.log(`${x+1} ${y+1} is white.`);
                 whites++;
             }
 
             if (value == 2) {
-                console.log(`${x+1} ${y+1} is black.`);
                 blacks++;
             }
 
@@ -167,11 +163,15 @@ class Game {
         }));
     };
 
-    blockClicked(x, y) {
-        if (this.getTileState(new Tile(x, y)) == null) {
-            this.game.grid[y][x] = 1 + this.game.turn;
-            this.processChanges(new Tile(x, y));
-            this.game.turn = this.game.turn == 0 ? 1 : 0;
+    blockClicked(target = new Tile()) {
+        if (this.getTileState() == null) {
+            this.game.grid[target.y][target.x] = 1 + this.game.turn;
+            if (this.blocksFlippedByPlacingTile(target).length > 0) {
+                this.processChanges(target);
+                this.game.turn = this.game.turn == 0 ? 1 : 0;
+            } else {
+                this.game.grid[target.y][target.x] = 0;
+            }
         }
     };
 
@@ -185,26 +185,14 @@ class Game {
                 cursor_y < blockBoundaries.y + blockBoundaries.h &&
                 this.hasAdjecent(new Tile(x, y))
             ) {
-                this.blockClicked(x, y);
+                this.blockClicked(new Tile(x, y));
             }
         }));
     };
 
-    Tile(_x = 0, _y = 0) {
-        return { x: _x, y: _y };
-    };
-
-    addTiles(a = new Tile(), b = new Tile()) {
-        return { x: a.x + b.x, y: a.y + b.y };
-    };
-
     getTileState(point = new Tile()) {
-        if (
-            point.y < 0 ||
-            point.y > 7 ||
-            point.x < 0 ||
-            point.x > 7
-        ) return null;
+
+        if (!point.isValid()) return null;
 
         switch (this.game.grid[point.y][point.x]) {
             case 0:
@@ -223,39 +211,43 @@ class Game {
         });
     };
 
-    processChanges(target = new Tile()) {
+    blocksFlippedByPlacingTile(target = new Tile()) {
+        var blocksToSwitch = [];
+
         // Check each directions
         this.game.directions.forEach((direction) => {
-            var blocksToSwitch = [];
+            var passedBlocks = []
             var directionPointer = direction;
 
             // Keep moving in each direction while encountering blocks of oposite color
             while (
-                this.getTileState(this.addTiles(target, directionPointer)) !== null &&
-                this.getTileState(this.addTiles(target, directionPointer)) != this.getTileState(target)
+                this.getTileState(target.add(directionPointer)) !== null &&
+                this.getTileState(target.add(directionPointer)) != this.getTileState(target)
             ) {
-                blocksToSwitch.push(this.addTiles(target, directionPointer));
-                directionPointer = this.addTiles(directionPointer, direction);
+                passedBlocks.push(target.add(directionPointer));
+                directionPointer = directionPointer.add(direction);
             }
 
-            // After the movement has been finished - if the encountered block is of original colour - claim the passed blocks
-            if (this.getTileState(target) == this.getTileState(this.addTiles(target, directionPointer))) {
-                blocksToSwitch.forEach((block, index) => {
-                    let gameturn = this.game.turn;
-                    let block_x = block.x;
-                    let block_y = block.y;
-                    setTimeout(() => {
-                        this.game.grid[block_y][block_x] = 1 + gameturn;
-                        this.updateScore();
-                    }, 100 * index);
-                });
+            if (this.getTileState(target) == this.getTileState(target.add(directionPointer))) {
+                blocksToSwitch = blocksToSwitch.concat(passedBlocks);
             }
+        });
+        return blocksToSwitch;
+    }
+
+    processChanges(target = new Tile()) {
+        this.blocksFlippedByPlacingTile(target).forEach((block, index) => {
+            let gameturn = this.game.turn;
+            let block_x = block.x;
+            let block_y = block.y;
+            this.game.grid[block_y][block_x] = 1 + gameturn;
+            this.updateScore();
         });
     };
 
     hasAdjecent(target = new Tile()) {
         return this.game.directions.some((direction) => {
-            return (this.getTileState(this.addTiles(target, direction)) !== null);
+            return (this.getTileState(target.add(direction)) !== null);
         });
     };
 }

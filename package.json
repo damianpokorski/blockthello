@@ -8,7 +8,7 @@
         "serve": "node index.js",
         "build_browserify": "browserify source/main.js --standalone game > js/bundle.js",
         "build_babelify": "browserify source/main.js --standalone game -t [ babelify --presets [babel-preset-env] ]  > js/bundle.js",
-        "build_uglyify": "browserify source/main.js --standalone game -t [ babelify --presets [babel-preset-env] ] | uglifyjs > js/bundle.js",
+        "build_uglyify": "browserify source/main.js --standalone game -t [ babelify --presets [babel-preset-env] ] | uglifyjs --compress --mangle > js/bundle.js",
         "build_and_serve": "npm run build_uglyify | npm run serve"
     },
     "author": "Damian Pokorski <damianpokorski@hotmail.com> (http://damianpokorski.com)",

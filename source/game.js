@@ -164,7 +164,7 @@ class Game {
     };
 
     blockClicked(target = new Tile()) {
-        if (this.getTileState() == null) {
+        if (this.getTileState(target) == null) {
             this.game.grid[target.y][target.x] = 1 + this.game.turn;
             if (this.blocksFlippedByPlacingTile(target).length > 0) {
                 this.processChanges(target);

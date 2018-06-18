@@ -41,13 +41,7 @@
             game.draw();
         }
 
-        function mouseclicked() {
-            console.log("CLICKED");
-            game.touched(mouseX, mouseY);
-        }
-
-        function touchStarted() {
-            console.log("TOUCHED");
+        function touchEnded() {
             game.touched(mouseX, mouseY);
         }
     </script>

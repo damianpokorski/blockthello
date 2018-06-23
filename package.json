@@ -4,12 +4,10 @@
     "description": "Simple Othello clone",
     "main": "index.js",
     "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1",
-        "serve": "node index.js",
-        "build_browserify": "browserify source/main.js --standalone game > js/bundle.js",
-        "build_babelify": "browserify source/main.js --standalone game -t [ babelify --presets [babel-preset-env] ]  > js/bundle.js",
-        "build_uglyify": "browserify source/main.js --standalone game -t [ babelify --presets [babel-preset-env] ] | uglifyjs > js/bundle.js",
-        "build_and_serve": "npm run build_uglyify | npm run serve"
+        "serve": "node dev/serve.js",
+        "watchify": "node dev/watchify.js",
+        "dev": "concurrently \"npm:watchify\" \"npm:serve\"",
+        "build": "browserify source/main.js --standalone game -t [ babelify --presets [babel-preset-env] ] | uglifyjs > js/bundle.js"
     },
     "author": "Damian Pokorski <damianpokorski@hotmail.com> (http://damianpokorski.com)",
     "license": "ISC",
@@ -17,11 +15,13 @@
         "@babel/core": "^7.0.0-beta.51",
         "babel-preset-env": "2.0.0-alpha.20",
         "babelify": "^9.0.0",
+        "browserify": "^16.2.2",
         "express": "^4.16.3",
         "jquery": "^3.3.1",
         "p5": "^0.6.1",
         "serve": "^9.0.0",
         "serve-handler": "^2.4.0",
-        "uglify-js": "^3.4.0"
+        "uglify-js": "^3.4.0",
+        "watchify": "^3.11.0"
     }
 }

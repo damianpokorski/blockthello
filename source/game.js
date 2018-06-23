@@ -1,41 +1,30 @@
 import Tile from './tile';
+import Board from './board';
+import Player from './player';
+import Vector2D from './vector2d';
 
 class Game {
     constructor() {
+        // Construct static player object
+        this.player = {
+            none: new Player(0, "None"),
+            white: new Player(1, "White"),
+            black: new Player(2, "Black")
+        };
+        console.log(this.players);
+
+        this.board = new Board();
+        this.board.setTile(3, 3, this.player.white);
+        this.board.setTile(4, 4, this.player.white);
+        this.board.setTile(3, 4, this.player.black);
+        this.board.setTile(4, 3, this.player.black);
         // Common variables
         this.style = {};
-        this.game = {
-            players: [{
-                    name: "White",
-                    score: 0
-                },
-                {
-                    name: "Black",
-                    score: 0
-                }
-            ],
-            turn: 0, // 0 - White, 1 - Black
-            grid: [ // 0 - Empty, 1- White, 2 - Black
-                [0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 2, 1, 0, 0, 0],
-                [0, 0, 0, 1, 2, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0]
-            ],
-            directions: [
-                new Tile(-1, -1), new Tile(0, -1), new Tile(1, -1),
-                new Tile(-1, 0), new Tile(1, 0),
-                new Tile(-1, 1), new Tile(0, 1), new Tile(1, 1)
-            ]
-        };
+        this.turn = 0; // 0 - White, 1 - Black
 
         // Utility functions
         this._dimensions = null;
     }
-
 
     // P5 setup
     setup() {
@@ -89,25 +78,29 @@ class Game {
     };
 
     getScore() {
-        return this.game.players[0].score.toString() + " - " + this.game.players[1].score.toString();
+        return this.player.white.score + " - " + this.player.black.score;
     };
 
     getCurrentPlayer() {
-        return this.game.turn == 0 ? "White" : "Black";
+        return this.turn == 0 ? this.player.white : this.player.black;
+    };
+
+    getNextPlayer() {
+        return this.turn == 1 ? this.player.white : this.player.black;
     };
 
     drawScoreboard() {
         fill(this.style.text);
         textSize(this.dimensionsPercent(0, 10).y / 2);
         textAlign(LEFT);
-        text(this.game.players[0].name, this.dimensionsPercentX(10), this.dimensionsPercentY(5));
+        text(this.player.white.name, this.dimensionsPercentX(10), this.dimensionsPercentY(5));
         textAlign(RIGHT);
-        text(this.game.players[1].name, this.dimensionsPercentX(90), this.dimensionsPercentY(5));
+        text(this.player.black.name, this.dimensionsPercentX(90), this.dimensionsPercentY(5));
         textAlign(CENTER);
         text(this.getScore(), this.dimensionsPercentX(50), this.dimensionsPercentY(5));
 
         textSize(this.dimensionsPercent(0, 10).y / 4);
-        text(`${this.getCurrentPlayer()}s turn`, this.dimensionsPercentX(50), this.dimensionsPercentY(10));
+        text(`${this.getCurrentPlayer().name}s turn`, this.dimensionsPercentX(50), this.dimensionsPercentY(10));
     };
 
     gridBlockPosition(X, Y) {
@@ -124,11 +117,11 @@ class Game {
     drawGrid() {
         fill(this.style.white);
 
-        this.game.grid.forEach((row, y) => row.forEach((value, x) => {
-            var blockPosition = this.gridBlockPosition(x, y);
-            fill(this.style.block[value]);
+        this.board.tiles.forEach((tile) => {
+            var blockPosition = this.gridBlockPosition(tile.location.x, tile.location.y);
+            fill(this.style.block[tile.state]);
             rect(blockPosition.x, blockPosition.y, blockPosition.w, blockPosition.h);
-        }));
+        });
     };
 
     // Rendering
@@ -141,73 +134,32 @@ class Game {
     };
 
     updateScore() {
-        var whites = 0;
-        var blacks = 0;
-        this.game.grid.forEach((row, y) => row.forEach((value, x) => {
-            if (value == 1) {
-                whites++;
-            }
-
-            if (value == 2) {
-                blacks++;
-            }
-
-        }));
-        this.game.players[0].score = whites;
-        this.game.players[1].score = blacks;
-    };
-
-    forEachBlock(func = (x, y, value) => {}) {
-        this.game.grid.forEach((row, y) => row.forEach((value, x) => {
-            func(x, y, value);
-        }));
+        this.player.white.score = this.board.getScore(this.player.white);
+        this.player.black.score = this.board.getScore(this.player.black);
     };
 
     blockClicked(target = new Tile()) {
-        if (this.getTileState() == null) {
-            this.game.grid[target.y][target.x] = 1 + this.game.turn;
-            if (this.blocksFlippedByPlacingTile(target).length > 0) {
-                this.processChanges(target);
-                this.game.turn = this.game.turn == 0 ? 1 : 0;
-            } else {
-                this.game.grid[target.y][target.x] = 0;
-            }
+        this.board.setTile(target.location.x, target.location.y, this.getCurrentPlayer());
+        if (this.blocksFlippedByPlacingTile(target).length > 0) {
+            this.processChanges(target);
+            this.turn = this.turn == 0 ? 1 : 0;
+        } else {
+            this.board.setTile(target.location.x, target.location.y, this.player.none);
         }
     };
 
     touched(cursor_x = 0, cursor_y = 0) {
-        this.game.grid.forEach((row, y) => row.forEach((value, x) => {
-            var blockBoundaries = this.gridBlockPosition(x, y);
+        this.board.tiles.forEach((tile) => {
+            var blockBoundaries = this.gridBlockPosition(tile.location.x, tile.location.y);
             if (
                 cursor_x > blockBoundaries.x &&
                 cursor_x < blockBoundaries.x + blockBoundaries.w &&
                 cursor_y > blockBoundaries.y &&
                 cursor_y < blockBoundaries.y + blockBoundaries.h &&
-                this.hasAdjecent(new Tile(x, y))
+                this.hasAdjecent(tile)
             ) {
-                this.blockClicked(new Tile(x, y));
+                this.blockClicked(tile);
             }
-        }));
-    };
-
-    getTileState(point = new Tile()) {
-
-        if (!point.isValid()) return null;
-
-        switch (this.game.grid[point.y][point.x]) {
-            case 0:
-                return null;
-            case 1:
-                return this.game.players[0].name;
-            case 2:
-                return this.game.players[1].name;
-        }
-    };
-
-    filterDirection(origin = new Tile(), direction = new Tile(), filter) {
-        return filter({
-            x: origin.x + direction.x,
-            y: origin.y + direction.y
         });
     };
 
@@ -215,21 +167,30 @@ class Game {
         var blocksToSwitch = [];
 
         // Check each directions
-        this.game.directions.forEach((direction) => {
-            var passedBlocks = []
-            var directionPointer = direction;
-
+        Vector2D.directions_array().forEach((direction) => {
+            var passedBlocks = [];
+            var pointer = target.location.add(direction);
             // Keep moving in each direction while encountering blocks of oposite color
             while (
-                this.getTileState(target.add(directionPointer)) !== null &&
-                this.getTileState(target.add(directionPointer)) != this.getTileState(target)
+                this.board.getTileByVector2D(pointer) &&
+                this.board.getTileByVector2D(pointer).state !== 0 &&
+                this.board.compareTiles(pointer, target.location, true)
             ) {
-                passedBlocks.push(target.add(directionPointer));
-                directionPointer = directionPointer.add(direction);
+                passedBlocks.push(pointer);
+                console.log(['Passed', [pointer.x, pointer.y]]);
+                pointer = pointer.add(direction);
             }
-
-            if (this.getTileState(target) == this.getTileState(target.add(directionPointer))) {
-                blocksToSwitch = blocksToSwitch.concat(passedBlocks);
+            if (passedBlocks.length) {
+                console.log([
+                    'Finaly compare',
+                    this.board.getTileByVector2D(target.location).location,
+                    this.board.getTileByVector2D(target.location).state,
+                    this.board.getTileByVector2D(pointer).location,
+                    this.board.getTileByVector2D(pointer).state,
+                ]);
+                if (this.board.compareTiles(target.location, pointer)) {
+                    blocksToSwitch = blocksToSwitch.concat(passedBlocks);
+                }
             }
         });
         return blocksToSwitch;
@@ -237,17 +198,17 @@ class Game {
 
     processChanges(target = new Tile()) {
         this.blocksFlippedByPlacingTile(target).forEach((block, index) => {
-            let gameturn = this.game.turn;
+            let gameturn = this.turn;
             let block_x = block.x;
             let block_y = block.y;
-            this.game.grid[block_y][block_x] = 1 + gameturn;
+            this.board.setTile(block_x, block_y, this.getCurrentPlayer());
             this.updateScore();
         });
     };
 
     hasAdjecent(target = new Tile()) {
-        return this.game.directions.some((direction) => {
-            return (this.getTileState(target.add(direction)) !== null);
+        return Vector2D.directions_array().some((direction) => {
+            return (this.board.getTileByVector2D(target.location.add(direction)) !== null);
         });
     };
 }

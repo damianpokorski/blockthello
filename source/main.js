@@ -1,9 +1,5 @@
 console.log('HELLO THERE!?');
-var game = require('./game.js');
 
-window.setup = () => game.setup();
-window.draw = () => game.draw();
-window.mouseclicked = () => game.touched(mouseX, mouseY);
-window.touchStarted = () => game.touched(mouseX, mouseY);
+var engine = require('./Engine.js');
 
 console.log('Initialized..?');

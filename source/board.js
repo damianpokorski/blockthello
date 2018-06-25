@@ -1,5 +1,5 @@
 import Tile from './tile';
-import Player from './player'
+import Vector2D from './vector2d';
 
 class Board {
     constructor(width = 8, height = 8) {
@@ -48,7 +48,7 @@ class Board {
 
     getScore(player) {
         return this.tiles.filter((tile) => {
-            tile.state == player.id;
+            return tile.state == player.id;
         }).length;
     }
 
@@ -61,6 +61,16 @@ class Board {
 
     validateTile(tile = new Tile()) {
         return tile.location.x >= 0 && tile.location.x < this.width && tile.location.y >= 0 && tile.location.y < this.height;
+    }
+
+    hasAdjecent(target = new Tile()) {
+        return Vector2D.directions_array().some((direction) => {
+            return (this.getTileByVector2D(target.location.add(direction)) !== null);
+        });
+    };
+
+    getClickableTiles() {
+        return this.tiles.filter(tile => tile.state == 0).filter(tile => this.hasAdjecent(tile));
     }
 }
 

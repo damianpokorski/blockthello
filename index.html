@@ -32,26 +32,45 @@
 
     <!-- Where the actual magic happens-->
     <script src="js/bundle.js"></script>
-    <script>
-        // function setup() {
-        //     game.setup();
-        // }
-
-        // function draw() {
-        //     game.draw();
-        // }
-
-        // function mouseclicked() {
-        //     console.log("CLICKED");
-        //     game.touched(mouseX, mouseY);
-        // }
-
-        // function touchStarted() {
-        //     console.log("TOUCHED");
-        //     game.touched(mouseX, mouseY);
-        // }
-    </script>
     <!-- Google Analytics: change UA-XXXXX-X to be your site's ID. -->
+
+    <style>
+        .ribbon {
+            width: 128px;
+            height: 128px;
+            position: absolute;
+            top: 0px;
+            transition-duration: .25s;
+            z-index: 2;
+            background-size: contain !important;
+        }
+        
+        .ribbon:hover {
+            width: 192px;
+            height: 192px;
+        }
+        
+        .git {
+            background: url('/img/git.png');
+            right: 0px;
+        }
+        
+        .home {
+            background: url('/img/home.png');
+        }
+        
+        canvas {
+            position: absolute;
+            top: 0px;
+            left: 0px;
+            z-index: 1;
+        }
+    </style>
+    <a href="https://github.com/damianpokorski/blockthello" class="ribbon git">
+    </a>
+
+    <a href="http://damianpokorski.com/" class="ribbon home">
+    </a>
     <script>
         (function(b, o, i, l, e, r) {
             b.GoogleAnalyticsObject = l;
@@ -68,7 +87,6 @@
         ga('create', 'UA-120924655-1', 'auto');
         ga('send', 'pageview');
     </script>
-
 </body>
 
-</html>
+</html>`

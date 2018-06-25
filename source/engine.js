@@ -76,19 +76,19 @@ class Engine {
         // White
         textSize(this.dimensionsPercent(0, 10).y / 2);
         textAlign(LEFT);
-        text(this.game.player.white.name, this.dimensionsPercentX(10), this.dimensionsPercentY(5));
+        text(this.game.player.white.name, this.dimensionsPercentX(10), this.dimensionsPercentY(15));
 
         // Black
         textAlign(RIGHT);
-        text(this.game.player.black.name, this.dimensionsPercentX(90), this.dimensionsPercentY(5));
+        text(this.game.player.black.name, this.dimensionsPercentX(90), this.dimensionsPercentY(15));
 
         // Score
         textAlign(CENTER);
-        text(this.game.board.getScore(this.game.player.white) + ' - ' + this.game.board.getScore(this.game.player.black), this.dimensionsPercentX(50), this.dimensionsPercentY(5));
+        text(this.game.board.getScore(this.game.player.white) + ' - ' + this.game.board.getScore(this.game.player.black), this.dimensionsPercentX(50), this.dimensionsPercentY(15));
 
         // Turn indicator
         textSize(this.dimensionsPercent(0, 10).y / 4);
-        text(`${this.game.getCurrentPlayer().name}s turn`, this.dimensionsPercentX(50), this.dimensionsPercentY(10));
+        text(`${this.game.getCurrentPlayer().name}s turn`, this.dimensionsPercentX(50), this.dimensionsPercentY(20));
     };
 
     // Calculates which tile was clicked out 
@@ -109,7 +109,7 @@ class Engine {
     };
 
     gridBlockPosition(X, Y) {
-        var topOffset = this.dimensionsPercentY(10);
+        var topOffset = this.dimensionsPercentY(25);
         var _width = this.dimensions().w / this.game.board.width;
         var _height = this.dimensions().h / this.game.board.height;
         var smaller = _width < _height ? _width : _height;

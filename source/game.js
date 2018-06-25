@@ -12,6 +12,20 @@ class Game {
             black: new Player(2, "Black")
         };
 
+        // Common variables
+        this.style = {};
+
+        // Utility functions
+        this._dimensions = null;
+
+        // hook for restart button
+        window.gameStart = () => this.gameStart();
+
+        // initialize the board and start the game
+        this.gameStart();
+    }
+
+    gameStart() {
         // Initialize board and set some tiles
         this.board = new Board();
         this.board.setTile(3, 3, this.player.white);
@@ -19,13 +33,10 @@ class Game {
         this.board.setTile(3, 4, this.player.black);
         this.board.setTile(4, 3, this.player.black);
 
-        // Common variables
-        this.style = {};
+        // Reset turns
         this.turn = 0; // 0 - White, 1 - Black
-
-        // Utility functions
-        this._dimensions = null;
     }
+
     getCurrentPlayer() {
         return this.turn == 0 ? this.player.white : this.player.black;
     };

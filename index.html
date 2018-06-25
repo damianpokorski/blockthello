@@ -35,14 +35,33 @@
     <!-- Google Analytics: change UA-XXXXX-X to be your site's ID. -->
 
     <style>
+        .restart {
+            position: absolute;
+            bottom: 0px;
+            left: 0px;
+            right: 0px;
+            margin: 0 auto;
+            width: 192px;
+            height: 40px;
+            transition-duration: .25s;
+            background: url('/img/restart.png');
+            background-size: contain !important;
+            z-index: 2;
+        }
+        
+        .restart:hover {
+            width: 255px;
+            height: 52px;
+        }
+        
         .ribbon {
             width: 128px;
             height: 128px;
             position: absolute;
             top: 0px;
             transition-duration: .25s;
-            z-index: 2;
             background-size: contain !important;
+            z-index: 2;
         }
         
         .ribbon:hover {
@@ -70,6 +89,9 @@
     </a>
 
     <a href="http://damianpokorski.com/" class="ribbon home">
+    </a>
+
+    <a href="#" class="restart" onclick="window.gameStart()">
     </a>
     <script>
         (function(b, o, i, l, e, r) {

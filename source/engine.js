@@ -10,20 +10,9 @@ class Engine {
         this.game = require('./game.js');
         this.game.engine = this;
 
-        console.log(this.game);
-
     }
 
     setup() {
-        // this.style = {
-        //     bg: color('#503C33'),
-        //     text: color('#EAAB75'),
-        //     block: {
-        //         0: color('#F9C77B'),	// Empty tile
-        //         1: color('#B4392E'),	// White tile
-        //         2: color('#302E2F')		// Black tile
-        //     }
-        // };
         this.style = {
             bg: color('#6CA6C1'), // 'Moonstone Blue'
             text: color('#343434'), // 'Jet' Black
@@ -68,15 +57,8 @@ class Engine {
     draw() {
         clear();
         background(this.style.bg);
-        this.drawPortrait();
         this.drawScoreboard();
         this.drawGrid();
-    };
-
-
-    drawPortrait() {
-        //fill(this.style.bg[1]);
-        //rect(this.dimensions().x, this.dimensions().y, this.dimensions().w, this.dimensions().h);
     };
 
     drawGrid() {

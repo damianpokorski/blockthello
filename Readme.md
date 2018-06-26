@@ -1,4 +1,4 @@
-# Blockthellow
+# Blockthello
 
 Just a simple othello clone written in JavaScript, since I've felt like I've not made any games recently.
 
